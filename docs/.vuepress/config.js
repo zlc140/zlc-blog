@@ -4,10 +4,11 @@ module.exports = {
     head: [
         ['link', { rel: 'icon', href: '/logo.jpg' }]
     ],
-    host: 'localhost',
-    post: '2019',
-    dest: './dist',
-    
+    base: '/zlc-blog/' ,
+    repo: 'https://github.com/zlc140/zlc-blog',
+    dest: './docs/.vuepress/dist',
+    serviceWorket: true,
+    ga: '',
     themeConfig: {
         sidebarDepth: 2,
         displayAllHeaders: false, // 默认值：false
