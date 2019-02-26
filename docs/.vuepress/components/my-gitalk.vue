@@ -14,7 +14,7 @@ export default {
                 repo: 'zlc-blog',
                 owner: 'zlc140',
                 admin: 'zlc140',
-                id: location.pathname,      // Ensure uniqueness and length less than 50
+                // id: window.location.pathname,      // Ensure uniqueness and length less than 50
                 distractionFreeMode: false  // Facebook-like distraction free mode
             }
         }

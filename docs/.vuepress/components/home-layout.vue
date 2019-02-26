@@ -9,7 +9,7 @@
             <ul>
                 <li class="button" v-for="(item,index) in lists" :key="index">
                     <div>{{item.name}}</div>
-                    </li>
+                </li>
             </ul>
         </div>
          <div class="main two-bg">
@@ -17,7 +17,7 @@
             <my-gitalk></my-gitalk>
         </div>
         <div class="main footer-box"> 
-            <div class="footer">
+            <div class="footer"> 
                 MIT Licensed | Copyright © 2019-love Zhanglc 
             </div>
         </div>
@@ -48,6 +48,26 @@ export default {
 </script>
 
 <style lang="less">
+@keyframes changimg {
+    0% {
+        width: 300px;
+        height: 300px;
+        border-radius: 0;
+        transform: rotate(360deg)
+    }
+    50% {
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        transform: rotate(-360deg)
+    }
+    100%{
+        width: 300px;
+        height: 300px;
+        border-radius: 0;
+        transform: rotate(360deg)
+    }
+}
 .home-container{
     width: 100%;
     height: auto;
@@ -70,14 +90,46 @@ export default {
             display: flex;
             align-items: center;
             justify-content: center;
-            img{
-                width: 80%;
+            img{ 
+                width: 300px;
+                height: 300px;
+                transform: translate3d(0,0,0);
+                animation: changimg 3s ease-in-out .2s 1; 
             }
         }
     }
+
     .two-bg{
         background: url(../public/img/services-bg.jpg);  
         background-attachment: fixed;
+        flex-flow: column nowrap;
+        overflow-y: auto;
+        div.bottom{ 
+            color:transparent;
+            font-size: 40px;
+            font-weight: bold;
+            background: linear-gradient(45deg, rgb(154, 239, 243) 0%, rgba(2, 92, 97, 0.4)  100%);
+            -webkit-background-clip: text;
+        }
+        &::-webkit-scrollbar {
+            width: 8px;
+            background: white;
+        }
+        &::-webkit-scrollbar-corner, /* 滚动条角落 */
+        &::-webkit-scrollbar-thumb,
+        &::-webkit-scrollbar-track {
+            border-radius: 4px;
+        }
+        &::-webkit-scrollbar-corner,
+        &::-webkit-scrollbar-track {
+        /* 滚动条轨道 */
+            background-color: rgba(180, 160, 120, 0.1);
+            box-shadow: inset 0 0 1px rgba(180, 160, 120, 0.5);
+        }
+        &::-webkit-scrollbar-thumb {
+        /* 滚动条手柄 */
+            background-color: #00adb5;
+        }
     }
     .three-bg{
         background: url(../public/img/contact-bg.jpg);  
@@ -126,6 +178,17 @@ export default {
         height: 120px;
         background-color: #243346;
         color: white;
+        .footer{
+            text-shadow: 0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882),
+            0 0 2px rgba(0, 173, 181, .2882);
+        }
     }
 }
 
