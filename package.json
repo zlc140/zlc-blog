@@ -19,5 +19,8 @@
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "vuepress": "^0.14.9"
+  },
+  "dependencies": {
+    "gitalk": "^1.5.0"
   }
 }

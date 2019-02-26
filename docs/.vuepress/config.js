@@ -3,11 +3,11 @@ module.exports = {
     description: "前端开发相关",
     head: [
         ['link', { rel: 'icon', href: '/logo.jpg' }]
-    ],
-    base: '/zlc-blog/' ,
+    ], 
+    base: '/zlc-blog/',
     repo: 'https://github.com/zlc140/zlc-blog',
     dest: './docs/.vuepress/dist',
-    serviceWorket: true,
+    serviceWorker: true,
     ga: '',
     themeConfig: {
         sidebarDepth: 2,
@@ -44,7 +44,7 @@ module.exports = {
                     ],
                     '/aboutCss/': [
                         {
-                            title: 'aboutCss1',
+                            title: 'css学习笔记',
                             collapsable: false,
                             children: [
                                 '/aboutCss/',

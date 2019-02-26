@@ -1,10 +1,12 @@
-
-::: tip
-If you find this project useful, you can buy author a glass of juice :tropical_drink:
-:::
-
-# 关于css
+---
+title: CSS学习笔记
+data: "2019/2/26 14:00:00"
+tag: CSS
+meta: 
+- name: description
+  content: CSS学习笔记
+- name: keywords
+  content: CSS3,CSS,动画
+---
 
 ## css常用网站
-
-[百度](https:baidu.com)

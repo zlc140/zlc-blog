@@ -7,13 +7,16 @@
         </div> 
         <div class="main three-bg">
             <ul>
-                <li v-for="(item,index) in lists" :key="index">{{item.name}}</li>
+                <li class="button" v-for="(item,index) in lists" :key="index">
+                    <div>{{item.name}}</div>
+                    </li>
             </ul>
         </div>
          <div class="main two-bg">
             <my-header></my-header>
+            <my-gitalk></my-gitalk>
         </div>
-        <div class="main footer-box">
+        <div class="main footer-box"> 
             <div class="footer">
                 MIT Licensed | Copyright © 2019-love Zhanglc 
             </div>
@@ -23,6 +26,7 @@
 
 <script>
 import myHeader from './my-header'
+import myGitalk from './my-gitalk'
 export default {
     data() {
         return {
@@ -35,7 +39,10 @@ export default {
         }
     },
     components: {
-        myHeader
+        myHeader,myGitalk
+    },
+    mounted(){
+        console.log(this.$page)
     }
 }
 </script>
@@ -56,7 +63,7 @@ export default {
         overflow: hidden;
     } 
     .one-bg{
-        background: url(/img/skills-bg.jpg);  
+        background: url(../public/img/skills-bg.jpg);  
         background-attachment: fixed;
         .content-box{
             width: 50%;
@@ -69,11 +76,11 @@ export default {
         }
     }
     .two-bg{
-        background: url(/img/services-bg.jpg);  
+        background: url(../public/img/services-bg.jpg);  
         background-attachment: fixed;
     }
     .three-bg{
-        background: url(/img/contact-bg.jpg);  
+        background: url(../public/img/contact-bg.jpg);  
         background-attachment: fixed;
         ul{
             width: 100%;
@@ -92,6 +99,21 @@ export default {
                 justify-content: center;
                 color: #fff;
                 margin-bottom: 20px;
+                position: relative;
+                transition:transform .5s;
+                div{ 
+                    border-radius: 50%;
+                    background-color: #0D1B2E;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    z-index: 1;
+                }
             }
         }
     }
@@ -106,4 +128,46 @@ export default {
         color: white;
     }
 }
+
+ .button{ 
+    position: relative; 
+    margin:30px auto;
+    box-sizing: border-box;
+    cursor: pointer; 
+    &::before{
+      content:'';
+      width:0;
+      height:0;
+      background:  #00adb5;
+      position: absolute;
+      top:-5px;right:-5px;
+      z-index: -1;
+      border-radius: 50%;
+      transition: width .5s,height .5s; 
+    }
+    &::after{
+      content:'';
+      width:0;
+      height:0;
+      background:  #00adb5;
+      position: absolute;
+      bottom:-5px;left:-5px;
+      z-index: -1;
+      border-radius: 50%;
+      transition: width .5s,height .5s;
+    }
+    &:hover{
+        transform: rotate(360deg);
+    }
+    &:hover::before{
+      z-index:0;
+      width:calc(100% + 10px);
+      height:calc(100% + 10px); 
+    }
+    &:hover::after{
+      z-index:0;
+      width:calc(100% + 2px);
+      height:calc(100% + 2px); 
+    }
+  }
 </style>

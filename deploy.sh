@@ -13,6 +13,4 @@ git init
 git add -A
 git commit -m 'update docs'
 
-git push -f git@github.com:zlc140@163.com/zlc140.github.io.git master:gh-pages
-
-cd -
+git push -f https://github.com/zlc140/zlc-blog.git master:gh-pages
