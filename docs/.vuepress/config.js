@@ -3,7 +3,7 @@ module.exports = {
     description: "前端开发相关",
     head: [
         ['link', { rel: 'icon', href: '/logo.jpg' }]
-    ], 
+    ],
     base: '/zlc-blog/',
     repo: 'https://github.com/zlc140/zlc-blog',
     dest: './docs/.vuepress/dist',
@@ -12,33 +12,54 @@ module.exports = {
     themeConfig: {
         sidebarDepth: 2,
         displayAllHeaders: false, // 默认值：false
-        docsDir: 'docs', 
+        docsDir: 'docs',
         locales: {
             '/': {
                 label: 'English',
                 selectText: 'Languages',
                 editLinkText: 'Edit this page on GitHub',
-                nav: [ 
+                nav: [
                     { text: 'web', items: [
                         { text: 'aboutJs', link: '/aboutJs/' },
                         { text: 'aboutCss', link: '/aboutCss/' }
-                    ]}, 
+                    ]},
                     { text: 'counter', link: '/counter/' },
-                    {text: 'Tags', link: '/tags/', tags: true},
-                    { text: 'github', link: 'https://github.com/zlc140'} 
+                    { text: 'Tags', link: '/tags/', tags: true},
+                    { text: 'About', link: '/about/', tags: true},
+                    { text: 'github', link: 'https://github.com/zlc140'}
                 ],
-                sidebar: { 
+                sidebar: {
                     '/aboutJs/': [
                         {
                             title: 'Js相关知识',
-                            collapsable: false,
+                            collapsable: true,
                             children: [
                                 '/aboutJs/',
                                 '/aboutJs/eventLoop.md',
                                 '/aboutJs/webPage.md',
                                 '/aboutJs/control.md',
                                 '/aboutJs/debounce.md',
-                                '/aboutJs/loadImg.md'
+                                '/aboutJs/loadImg.md',
+                                '/aboutJs/callApply.md',
+                                '/aboutJs/selfNew.md',
+                                '/aboutJs/hoc.md',
+                                '/aboutJs/curry.md',
+                                '/aboutJs/proto.md',
+
+                            ]
+                        },
+                        {
+                            title: 'ES6相关知识',
+                            collapsable: true,
+                            children: [
+                                '/aboutJs/aboutEs6/es6.md',
+                                '/aboutJs/aboutEs6/generator.md'
+                            ]
+                        },
+                        {
+                            title: 'TS相关知识',
+                            collapsable: true,
+                            children: [
                             ]
                         }
                     ],
@@ -56,10 +77,20 @@ module.exports = {
                     ],
                     '/counter/': [
                         {
-                            title: 'Counter',
+                            title: 'vuepress学习',
                             collapsable: false,
                             children: [
                                 '/counter/'
+                            ]
+                        }
+
+                    ],
+                    '/about/': [
+                        {
+                            title: 'About',
+                            collapsable: false,
+                            children: [
+                                '/about/'
                             ]
                         }
 
@@ -83,5 +114,5 @@ module.exports = {
     postcss: {
         plugins: [require('autoprefixer')]
     }
-   
+
 }

@@ -11,7 +11,7 @@ title: Counter
 
 {{$page}}
  
-<span v-for="i in 3">{{i}}</span>
+<span v-for="i in 3" :key="i">{{i}}</span>
 
 ::: tip Tiping!!
 This counter app was developed using VueJS!!
