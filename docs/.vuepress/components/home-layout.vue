@@ -4,7 +4,7 @@
             <div class="content-box">
                 <img src="../public/logo.jpg" />
             </div>
-        </div> 
+        </div>
         <div class="main three-bg">
             <ul>
                 <li class="button" v-for="(item,index) in lists" :key="index">
@@ -16,9 +16,9 @@
             <my-header></my-header>
             <my-gitalk></my-gitalk>
         </div>
-        <div class="main footer-box"> 
-            <div class="footer"> 
-                MIT Licensed | Copyright © 2019-love Zhanglc 
+        <div class="main footer-box">
+            <div class="footer">
+                MIT Licensed | Copyright © 2019-love Zhanglc
             </div>
         </div>
     </div>
@@ -68,11 +68,12 @@ export default {
         transform: rotate(360deg)
     }
 }
+
 .home-container{
     width: 100%;
     height: auto;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     flex-basis: auto;
     .main{
         width: 100%;
@@ -81,30 +82,30 @@ export default {
         align-items: center;
         justify-content: center;
         overflow: hidden;
-    } 
+    }
     .one-bg{
-        background: url(../public/img/skills-bg.jpg);  
+        background: url(../public/img/skills-bg.jpg);
         background-attachment: fixed;
         .content-box{
             width: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            img{ 
+            img{
                 width: 300px;
                 height: 300px;
                 transform: translate3d(0,0,0);
-                animation: changimg 3s ease-in-out .2s 1; 
+                animation: changimg 3s ease-in-out .2s 1;
             }
         }
     }
 
     .two-bg{
-        background: url(../public/img/services-bg.jpg);  
+        background: url(../public/img/services-bg.jpg);
         background-attachment: fixed;
         flex-flow: column nowrap;
         overflow-y: auto;
-        div.bottom{ 
+        div.bottom{
             color:transparent;
             font-size: 40px;
             font-weight: bold;
@@ -132,7 +133,7 @@ export default {
         }
     }
     .three-bg{
-        background: url(../public/img/contact-bg.jpg);  
+        background: url(../public/img/contact-bg.jpg);
         background-attachment: fixed;
         ul{
             width: 100%;
@@ -143,7 +144,7 @@ export default {
             li{
                 width: 150px;
                 height: 150px;
-                font-size: 25px; 
+                font-size: 25px;
                 border: 5px solid white;
                 border-radius: 50%;
                 display: inline-flex;
@@ -153,7 +154,7 @@ export default {
                 margin-bottom: 20px;
                 position: relative;
                 transition:transform .5s;
-                div{ 
+                div{
                     border-radius: 50%;
                     background-color: #0D1B2E;
                     position: absolute;
@@ -192,11 +193,11 @@ export default {
     }
 }
 
- .button{ 
-    position: relative; 
+ .button{
+    position: relative;
     margin:30px auto;
     box-sizing: border-box;
-    cursor: pointer; 
+    cursor: pointer;
     &::before{
       content:'';
       width:0;
@@ -206,7 +207,7 @@ export default {
       top:-5px;right:-5px;
       z-index: -1;
       border-radius: 50%;
-      transition: width .5s,height .5s; 
+      transition: width .5s,height .5s;
     }
     &::after{
       content:'';
@@ -225,12 +226,12 @@ export default {
     &:hover::before{
       z-index:0;
       width:calc(100% + 10px);
-      height:calc(100% + 10px); 
+      height:calc(100% + 10px);
     }
     &:hover::after{
       z-index:0;
       width:calc(100% + 2px);
-      height:calc(100% + 2px); 
+      height:calc(100% + 2px);
     }
   }
 </style>

@@ -8,6 +8,7 @@ meta:
 - name: keywords
   content: JS,Object,prototype,原型链,继承
 ---
+[[toc]]
 
 ## JS原型
 

@@ -10,6 +10,7 @@ features:
   details: vue组件可以直接使用，vuepress会自动注册.vuepress/components下的组件
 footer: MIT Licensed | Copyright © 2019-love Zhanglc 
 --- 
+
 <my-header></my-header>
 
 <!-- 自定义首页 设置layout之后首页就会直接使用自定的layou页面 -->
