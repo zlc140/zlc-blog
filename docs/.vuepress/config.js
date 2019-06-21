@@ -21,6 +21,7 @@ module.exports = {
                 nav: [
                     { text: 'web', items: [
                         { text: 'aboutJs', link: '/aboutJs/' },
+                        { text: 'aboutVue', link: '/aboutVue/' },
                         { text: 'aboutCss', link: '/aboutCss/' }
                     ]},
                     { text: 'counter', link: '/counter/' },
@@ -71,6 +72,17 @@ module.exports = {
                                 '/aboutCss/',
                                 '/aboutCss/one.md',
                                 '/aboutCss/two.md'
+                            ]
+                        }
+
+                    ],
+                    '/aboutVue/': [
+                        {
+                            title: 'vue学习',
+                            collapsable: false,
+                            children: [
+                                '/aboutVue/',
+                                '/aboutVue/vueApi.md'
                             ]
                         }
 
