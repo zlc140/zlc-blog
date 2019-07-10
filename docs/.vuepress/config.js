@@ -22,11 +22,11 @@ module.exports = {
                     { text: 'web', items: [
                         { text: 'aboutJs', link: '/aboutJs/' },
                         { text: 'aboutVue', link: '/aboutVue/' },
-                        { text: 'aboutCss', link: '/aboutCss/' }
+                        { text: 'aboutCss', link: '/aboutCss/' },
+                        { text: '性能优化', link: '/optimize/optimize' },
                     ]},
                     { text: 'counter', link: '/counter/' },
                     { text: 'Tags', link: '/tags/', tags: true},
-                    { text: 'About', link: '/about/', tags: true},
                     { text: 'github', link: 'https://github.com/zlc140'}
                 ],
                 sidebar: {
@@ -86,6 +86,16 @@ module.exports = {
                             ]
                         }
 
+                    ],
+                    '/optimize': [
+                        {
+                            title: '性能优化',
+                            collapsable: false,
+                            children: [
+                                '/optimize/',
+                                '/optimize/optimize.md'
+                            ]
+                        }
                     ],
                     '/counter/': [
                         {
