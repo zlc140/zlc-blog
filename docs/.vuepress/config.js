@@ -46,6 +46,8 @@ module.exports = {
                                 '/aboutJs/hoc.md',
                                 '/aboutJs/curry.md',
                                 '/aboutJs/proto.md',
+                                '/aboutJs/loop.md',
+                                '/aboutJs/JSONP.md'
 
                             ]
                         },
