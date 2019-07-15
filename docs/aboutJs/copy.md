@@ -31,9 +31,11 @@ f. 会忽略 undefined
 
 2. js实现深拷贝
 ```js
+// 思路是：深度优先遍历（递归就是深度优先的思路）
 function deepCopy(obj, hash= new WeakMap()) {
     if(obj instanceof RegExp) return new RegExp(obj);
     if(obj instanceof Date) return new Date(obj);
+    if(obj instanceof Function) return new Function(obj);
     if(obj === null || typeof obj !== 'object') {
         return obj
     }
@@ -48,4 +50,17 @@ function deepCopy(obj, hash= new WeakMap()) {
     }
     return t
 }
+
+// 思路：广度优先遍历 - 未完成
+    
+function deepCopy2(obj) {
+    let origin = [obj]
+    let copyObj = {}
+    while (origin.length > 0) {
+        let itmes = origin.shift()
+        
+    }
+    
+}
+
 ```

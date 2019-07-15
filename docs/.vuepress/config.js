@@ -47,7 +47,8 @@ module.exports = {
                                 '/aboutJs/curry.md',
                                 '/aboutJs/proto.md',
                                 '/aboutJs/loop.md',
-                                '/aboutJs/JSONP.md'
+                                '/aboutJs/JSONP.md',
+                                '/aboutJs/animation.md'
 
                             ]
                         },

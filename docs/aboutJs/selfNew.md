@@ -43,7 +43,8 @@ var p2 = objectFactory(Person)('JSX')
 const selfNew = function(fn, ...rest) {
     let instance = Object.create(fn.prototype)
     let res = fn.apply(instance, rest)
-    return isComplexDataType(res) ? res : instanve
+    //如果fn函数有返回值，且整个值的类型是一个Object/Function,则apply之后的res就是这个返回值，new的结果就是这个返回值，这个时候就获取不到fn上的prototype上的方法了
+    return isComplexDataType(res) ? res : instance
 }
 
 const isComplexDataType = obj => (typeof obj === 'object' || typeof obj === 'function') && obj !== null

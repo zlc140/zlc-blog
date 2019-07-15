@@ -84,9 +84,9 @@ function run(generatorFunc) {
 
 function* func() {
     let res = yield api(data)
-    cosnole.log(res)
-    let re2 = yield api(data2)
-    cosnole.log(res2)
+    console.log(res)
+    let res2 = yield api(data2)
+    console.log(res2)
     console.log(res,res2)
 }
 

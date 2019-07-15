@@ -13,6 +13,15 @@
                 number: 0,
             }
         },
+        mounted() {
+            fetch('http://127.0.0.1:3000/footer',{
+                mode: 'cors'
+            }).then(response => {
+                return response.json()
+            }).then(res => {
+                console.log(res)
+            })
+        },
         methods:{
             increment(){
                 if(this.number >= 0){

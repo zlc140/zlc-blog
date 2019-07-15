@@ -32,7 +32,7 @@ meta:
 4. `Event Loop` (入栈出栈的循环)
     不同的异步函数执行放入不同的任务中 === 宏任务(`macro-task`)  微任务(`micro-task`)
    
-   `macro-task`包括： `setTimeout`,`setInterval`,`setImmediate`,`I/O`,`UI redndering`
+   `macro-task`包括： `script`,`setTimeout`,`setInterval`,`setImmediate`,`I/O`,`UI redndering`
    `micro-task`包括： `process.nextTick`,`Promise`,`Object.observe`,`MutationObserver`
    
    - 执行完主线程任务
@@ -76,6 +76,13 @@ meta:
      
 ```
 结果: global - 1-2-3-4-5 - promise1 - then1 - 6 - timeout2 - timeout2_promise - timeout2_then - 6()
+
+6. 宏任务 -》 该宏任务下的微任务 -》 渲染 -》 宏任务
+所以浏览器每次执行完一个宏任务之后就会渲染浏览器（这个和vue的$nextTick有关联，nextTick会首先判断浏览器是否支持微任务promise等，如果都不支持才会setTimeout）
+
+7. async/await （本身就是promise+generator的语法糖，所以它是属于微任务）
+一直以为await会一直等表达式的代码执行完才会执行后边的js代码，实际上await是一个让出线程的标志。await后边的代码会执行一遍放到微任务中然后就跳出
+整个async函数继续执行函数之后的代码
 
 [参考文献](https://juejin.im/post/5aacd1766fb9a028cb2d6766)
 

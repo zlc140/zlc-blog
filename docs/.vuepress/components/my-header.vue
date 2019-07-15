@@ -14,28 +14,28 @@
           num: 0,
           num2: 0
         }
-      },  
+      },
       mounted(){
         this.num2 = parseInt(this.txt.length/2) - 4
         this.getVal()
       },
       methods:{
-        getVal() { 
-          let delay = 300, _this = this; 
-          this.num++;  
-          if(this.num <= this.num2){  
-            this.text1 = this.txt.substr(0, this.num)  
-          }else if(this.num > this.num2 && this.num < this.txt.length+1){ 
+        getVal() {
+          let delay = 300, _this = this;
+          this.num++;
+          if(this.num <= this.num2){
+            this.text1 = this.txt.substr(0, this.num)
+          }else if(this.num > this.num2 && this.num < this.txt.length+1){
             this.$nextTick(function(){
               _this.text2 = _this.txt.substr(_this.num2, (_this.num - _this.num2))
-            })  
-          }else{  
-            return 
-          } 
+            })
+          }else{
+            return
+          }
            setTimeout( () => { this.getVal() },delay)
         }
       }
-      
+
     }
 </script>
 <style lang="less" scoped>
