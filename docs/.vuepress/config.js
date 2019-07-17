@@ -57,7 +57,8 @@ module.exports = {
                             collapsable: true,
                             children: [
                                 '/aboutJs/aboutEs6/es6.md',
-                                '/aboutJs/aboutEs6/generator.md'
+                                '/aboutJs/aboutEs6/generator.md',
+                                '/aboutJs/aboutEs6/request.md'
                             ]
                         },
                         {
@@ -138,6 +139,13 @@ module.exports = {
     },
     postcss: {
         plugins: [require('autoprefixer')]
+    },
+    configureWebpack: {
+        resolve: {
+            alias: {
+                '@public': ''
+            }
+        }
     }
 
 }

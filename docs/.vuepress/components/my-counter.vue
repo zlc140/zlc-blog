@@ -14,10 +14,12 @@
             }
         },
         mounted() {
-            fetch('http://127.0.0.1:3000/footer',{
-                mode: 'cors'
-            }).then(response => {
-                return response.json()
+            fetch('http://127.0.0.1:3000/footer').then(response => {
+                console.log(response)
+                if(response.ok){
+                    return response.json()
+                }
+
             }).then(res => {
                 console.log(res)
             })
