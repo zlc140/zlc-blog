@@ -1,5 +1,5 @@
 ---
-title: 前端请求数据
+title: fetch请求
 data: "2019/06/18 14:00:00"
 tag: ['es6', 'fetch', 'ajax', 'axios']
 meta: 
@@ -223,82 +223,82 @@ fetch(url, {
 })
 ```
 
-* fetch的不足，
-0. api简单
-1. fetch基于promise，也受限于promise,兼容方面需要安装相关垫片，
-2. fetch无法停止（没有ajax的abort方法）
-3. 不支持timeout机制
-4. 虽然没有回调嵌套的问题，但也会有then链接过长的问题，没有deferred（async/await）
-5. 没有progress提示
+* fetch的不足，  
+    + api简单
+    + fetch基于promise，也受限于promise,兼容方面需要安装相关垫片，
+    + fetch无法停止（没有ajax的abort方法）
+    + 不支持timeout机制
+    + 虽然没有回调嵌套的问题，但也会有then链接过长的问题，没有deferred（async/await）
+    + 没有progress提示
 * 不足的补充
-1. fetch-jsonp 支持jsonp
-```js
-fetchJsonp(url, {
-  timeout: 3000,
-  jsonpCallback: 'callback'
-}).then(function(response) {
-  console.log(response.json());
-}).catch(function(e) {
-  console.log(e)
-});
-```
-2 abort()使用promise.race()来实现
-
-```js
-let _fetch = (function(fetch) {
-    return function(url, options) {
-        let abort = null, timeout = 0;
-        
-        let abort_Promise = new Promise((resolve, reject) => {
-             abort = (e)=> {
-                 let val = e || 'abort'
-                reject(val)
-                console.info('abort done')
-            }
-        })
-        let promise = Promise.race([
-            fetch(url, options),
-            abort_Promise
-        ])
-        promise.abort = abort;
-        Object.defineProperties(promise, 'timeout', {
-            get: function() {
-                return timeout
-            },
-            set: function(ts) {
-                if((ts=+ts)){
-                    timeout = ts;
-                    setTimeout(abort,ts);
+    - fetch-jsonp 支持jsonp
+    ```js
+    fetchJsonp(url, {
+      timeout: 3000,
+      jsonpCallback: 'callback'
+    }).then(function(response) {
+      console.log(response.json());
+    }).catch(function(e) {
+      console.log(e)
+    });
+    ```
+    - abort()使用promise.race()来实现
+    
+    ```js
+    let _fetch = (function(fetch) {
+        return function(url, options) {
+            let abort = null, timeout = 0;
+            
+            let abort_Promise = new Promise((resolve, reject) => {
+                 abort = (e)=> {
+                     let val = e || 'abort'
+                    reject(val)
+                    console.info('abort done')
                 }
-            }
-        })
-        return promise;
-    }
-})(fetch)
-
-var p = _fetch('url',{}).then(response => {
+            })
+            let promise = Promise.race([
+                fetch(url, options),
+                abort_Promise
+            ])
+            promise.abort = abort;
+            Object.defineProperties(promise, 'timeout', {
+                get: function() {
+                    return timeout
+                },
+                set: function(ts) {
+                    if((ts=+ts)){
+                        timeout = ts;
+                        setTimeout(abort,ts);
+                    }
+                }
+            })
+            return promise;
+        }
+    })(fetch)
     
-},err => {
-    
-})
-p.timeout = 1
-p.abort();
-```
-fetch请求后, 立即调用abort方法, 该promise被拒绝, 符合预期,注意：abort()方法是另写的，没有写在then方法中，因为then返回的是一个新的promise对象
-
-3. timeout 通过Promise.race实现
-```js
-//简易版
-function timer(time) {
-    //return new Promise((resolve, reject) => {
-    //    setTimeout(function() {
-    //        reject('timeout')
-    //    }, time)
-    //})
-    return new Promise(resolve => setTimeout(resolve, time)).then(res => {
-        console.log('timeout')
+    var p = _fetch('url',{}).then(response => {
+        
+    },err => {
+        
     })
-}
-let p = fetch(url,options)
-Promise.race([p,timer(1000)])
-``` 
+    p.timeout = 1
+    p.abort();
+    ```
+    fetch请求后, 立即调用abort方法, 该promise被拒绝, 符合预期,注意：abort()方法是另写的，没有写在then方法中，因为then返回的是一个新的promise对象
+    
+    - timeout 通过Promise.race实现
+    ```js
+    //简易版
+    function timer(time) {
+        //return new Promise((resolve, reject) => {
+        //    setTimeout(function() {
+        //        reject('timeout')
+        //    }, time)
+        //})
+        return new Promise(resolve => setTimeout(resolve, time)).then(res => {
+            console.log('timeout')
+        })
+    }
+    let p = fetch(url,options)
+    Promise.race([p,timer(1000)])
+    ``` 
