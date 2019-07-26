@@ -116,3 +116,38 @@ provide: function() {
     inject: [getMap]
 }
 ```
+## keep-alive缓存
+1. keep-alive 包裹动态组件时会缓存不活动的组件
+该组件参数props
+* `include:`   字符串或正则表达式。只有名称匹配的组件会被缓存
+* `exclued:`   字符串或正则表达式。只有名称匹配的组件不会被缓存
+* `max`        数字。最多可以缓存多少组件实例。一旦缓存的组件达到最大值，新实例创建前会销毁最近没访问的那个
+>注意：include和exclude如果参数是数组或正则表达式，需要使用v-bind:的形式传
+```vue
+<keep-alive include="a,b">
+  <component :is="view"></component>
+</keep-alive>
+<!-- 多个条件判断的子组件 -->
+<keep-alive :include="/a|b/">
+  <comp-a v-if="a > 1"></comp-a>
+  <comp-b v-else></comp-b>
+</keep-alive>
+
+<!-- 和 `<transition>` 一起使用 -->
+<transition>
+  <keep-alive :include="['a', 'b']" :max="10">
+    <component :is="view"></component>
+  </keep-alive>
+</transition>
+```
+
+2. tab切换组件，通过keep-alive缓存组件，从而保留组件的当前状态，如果添加缓存之后我想对某些数据在切换回来
+的时候进行更新，怎么操作？
+
+>子组件添加生命周期：activated
+在渲染该组件或者进入该组件时会调用
+ 
+> deactivated
+在切换到别的组件时调用
+
+

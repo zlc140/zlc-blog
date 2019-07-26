@@ -80,3 +80,173 @@ meta:
 * 移动端的动画效果可能会比pc端的差，因此一定要注意性能优化，尽量减少动画元素的DOM复杂性，待动画结束后异步执行DOM操作
 
 <css-my-animation></css-my-animation>
+
+## rem布局(前端适配)
+rem是相对于根元素fontsize字体大小的单位，例如根元素（html）的fontsize:16px;则1rem = 16px;
+
+
+换算规则：
+设计稿： 750px;
+一个屏宽（clientWidth）是10rem,所以1rem = 75px; html的fontsize设置为75px即可
+
+1. 设置meta标签
+```html
+<meta name="viewport" content="width=device-width", initial-scale=1;maximum-scale=1>
+ 
+```
+- viewport: 虚拟窗口大小
+- width: 控制viewport宽度，可以自己设定320px等，一般设置为设备宽度（device-width）
+- initial-scale 初始缩放比例，默认为1
+- maximum-scale 用户最大缩放比例
+- minimum-scale=1, 最小缩放比
+- user-scalable=no 禁止用户缩放
+
+2. 设备dpr  像素比    window.devicePixelRatio获取设备的像素比
+* 设备物理像素：屏幕上有多少个可以改变颜色的点，入iphone6横向有750个
+* 设备独立像素：是虚拟概念，如css设置div宽为10px,则在屏幕表现为屏幕上的10个点
+
+dpr = 设备物理像素/设备独立像素  
+iphone6的是 750/375 = 2 dpr是2  
+也就是我们css设置1px相当于设备上的2px;  
+这时候就需要控制屏幕缩放比来使css的1px = 屏幕的1px  
+
+```js
+// dpr大于1的设备会通过meta设置缩放
+// 换算比例： 750的设计稿： 1rem = 20px; 1px = 0.05rem;
+    var maxWidth = 550;//对于px的
+    var isMobile = /Android|webOS|iPhone|iPod|ipad|BlackBerry/.test(navigator.userAgent);
+    var isIos = navigator.userAgent.match(/iphone|ipod|ipad/gi)
+    !(function (doc, win) {
+        //根据缩放比例设置body字体大小，即网页默认字体大小
+        function n() {
+            doc.body ? doc.body.style.fontSize = 12 * dpr + "px" : win.addEventListener("DOMContentLoaded", n)
+        }
+
+        function d() {
+            if(isMobile) {
+                maxWidth = docEle.clientWidth;
+            }
+            if (maxWidth / dpr > 640) {
+                maxWidth = 640 * dpr;
+            }
+            docEle.style.fontSize = 20 * (maxWidth / 750) + 'px';
+            //限制pc最小宽度
+            if (maxWidth < docEle.clientWidth && !isMobile) {
+                document.querySelector('html').style.width = maxWidth + 'px';
+                document.querySelector('html').classList.add('pc');
+            } else {
+                document.querySelector('html').style.width = '100%';
+                document.querySelector('html').classList.remove('pc');
+            } 
+        }   
+        var docEle = doc.documentElement,
+            dpr=parseInt(Math.min(win.devicePixelRatio, 3));
+            scale = 1 / dpr,
+            resizeEvent = 'orientationchange' in window ? 'orientationchange' : 'resize';
+            docEle.dataset.dpr = dpr;
+
+        var metaEle = doc.createElement('meta');
+        metaEle.name = 'viewport';
+        metaEle.content = 'initial-scale=' + scale + ',maximum-scale=' + scale;
+        docEle.firstElementChild.appendChild(metaEle);
+ 
+        if (!doc.addEventListener) return;
+        if(n(), d(), win.addEventListener(resizeEvent, d, false),win.addEventListener('pageshow', function(e){
+            e.persisted && d();
+        }), dpr >= 2) {
+            var a = doc.createElement("body"), s = doc.createElement("div");
+            s.style.border = ".5px solid transparent", a.appendChild(s), docEle.appendChild(a), 1 === s.offsetHeight && docEle.classList.add("hairlines"), docEle.removeChild(a)
+        }
+
+    })(document, window);
+```
+
+设置了rem单位之后可以在css中通过设置全局换算方法来换算对应的rem单位
+```sass
+$designWidth: 750;//设计稿宽度
+@function px2rem($px) {
+  @return $px*750/$designWidth/20 + rem
+}
+
+//index.scss中
+@import 'px2rem.scss'
+.banner{ height: px2rem(180)}
+
+```
+
+其他解决方法
+1. [hotcss.js](http://imochen.github.io/hotcss/)
+* 保证不同设备下的统一视觉体验。
+* 不需要你再手动设置 viewport，根据当前环境计算出最适合的 viewport。
+* 支持任意尺寸的设计图，不局限于特定尺寸的设计图。
+* 支持单一项目，多种设计图尺寸，专为解决大型，长周期项目。
+* 提供 px2rem 转换方法，CSS 布局，零成本转换，原始值不丢失。
+* 有效解决移动端真实 1 像素问题
+2. [px2rem](https://www.npmjs.com/package/px2rem-loader)[ lib-flexible]()二者配合使用
+> npm install px2rem-loader --save-dev //可以将css中的px转成rem
+npm install lib-flexible --save //在main中引入，用于设置rem的js
+* 需要在webpack中配置loader
+* 需要配合js使用，有耦合性
+:::tip
+    如果设置rem的时候修改了meta缩放（dpr=2是设置scale=0.5）,这个时候屏幕宽度即clientWidth = 设备宽度 * 3
+    动态设置scale虽然解决了1px(在一些设备上比较宽)的问题，当同时引发出来的问题就是不能在设置media来响应式了
+:::
+
+## 自适应/响应式
+1.自适应布局： 需要考虑不同终端，手机，电脑，ipad等设备，使用固定分割点进行布局，只需考虑几种不同状态的样式
+
+2. 响应式布局：需要考虑不同终端，流式布局+媒体查询，同时页面元素随着窗口变化而自动适配
+
+>差别：自适应不同分辨率的布局不变，响应式可能会变（如手机上是一行，电脑上是多行的）
+
+- 设置meta标签（初始为1，禁止缩放）
+- 媒体查询 @media，这个是可以直接设置在link上的，更具不同的宽度加载不同的css
+```html
+<link href="styles.css" rel="stylesheet" media="(max-width:480px)">
+<style>
+@import url(styles.css) (max-width:480px)
+/** iPad **/
+@media only screen and (min-width: 768px) and (max-width: 1024px) {}
+/** iPhone **/
+@media only screen and (min-width: 320px) and (max-width: 767px) {}
+
+//解决1px太粗的问题可以直接设置border为.5px;也可以通过缩放
+@media (device-pixel-ratio: 2) { .1px {
+    /*border: .5px solid #000;*/
+    height: 1px;
+    width: 200%;
+    border: none;
+    transform: scale(.5);
+}}
+</style>
+
+```
+
+```html
+<!--设置不同的图片-->
+<img src="image.jpg"
+     data-src-600px="image-600px.jpg"
+     data-src-800px="image-800px.jpg"
+     alt="">
+     
+<!--  css-->
+<style>
+ @media (min-device-width:600px) {
+     img[data-src-600px] {
+         content: attr(data-src-600px, url);
+     }
+ }
+ 
+ @media (min-device-width:800px) {
+     img[data-src-800px] {
+         content: attr(data-src-800px, url);
+     }
+ }    
+</style> 
+```
+
+3. 流式布局： 使用百分比定义宽度，高度px来固定，可根据父元素实时调整尺寸，尽可能适应不同屏幕
+
+
+
+
