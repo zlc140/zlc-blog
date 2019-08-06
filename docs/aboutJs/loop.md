@@ -144,6 +144,12 @@ es5新增的循环遍历方法
 1. Object.keys()遍历对象返回对象属性名（可枚举）
 2. Object.getOwnPropertyNames()遍历对象属性名（包括不可枚举）
 
+
+### $.each和forEach
+差别：  
+1. $.each可以遍历数组和对象，forEach只能是数组
+2. $.each回调的参数是index,itme,而forEach是item,index
+3. $.each可以遍历dom
 ```js
 let arr = [1,2,3,4,5]
 
@@ -151,7 +157,7 @@ for(var i =0; i < arr.length; i++){
     console.log(arr[i])
 }
 // 数组。obj都可
-var a = $.each(arr,function(index,item,arr){    //index:索引 item: 元素。
+var a = $.each(arr,function(index,item,arr){    //index:索引 item: 元素。和forEach相反
       console.log(index,item);
       console.log('this',this);  //this指向当前元素
 })
