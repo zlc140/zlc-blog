@@ -58,7 +58,8 @@ module.exports = {
                             children: [
                                 '/aboutJs/aboutEs6/es6.md',
                                 '/aboutJs/aboutEs6/generator.md',
-                                '/aboutJs/aboutEs6/request.md'
+                                '/aboutJs/aboutEs6/request.md',
+                                '/aboutJs/aboutEs6/babel.md'
                             ]
                         },
                         {
