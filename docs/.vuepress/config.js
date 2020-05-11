@@ -48,7 +48,7 @@ module.exports = {
                                 '/aboutJs/proto.md',
                                 '/aboutJs/loop.md',
                                 '/aboutJs/JSONP.md',
-                                '/aboutJs/animation.md'
+                                '/aboutJs/module.md'
 
                             ]
                         },
@@ -98,7 +98,9 @@ module.exports = {
                             collapsable: false,
                             children: [
                                 '/optimize/',
-                                '/optimize/optimize.md'
+                                '/optimize/optimize.md',
+                                '/optimize/source.md',
+                                '/optimize/seo.md'
                             ]
                         }
                     ],
