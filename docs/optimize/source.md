@@ -61,6 +61,7 @@ server {
 效果：打包之后1mb左右的js/css可以压缩一半以上（.js.gz)
 
 2. 图片压缩 image-webpack-loader
+注意：image-webpack-loader需要通过cnpm安装，直接npm会依赖包下载不全
 ``` js
 // 图片压缩
   config.module
