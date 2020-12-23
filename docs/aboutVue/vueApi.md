@@ -29,8 +29,39 @@ meta:
   <component v-bind:is="currentTabComponent"></component>
 </keep-alive>
 ```
+## 组件更新
+通过修改组件得key值更新组件渲染
+```vue
+<template>
+  <div>
+    <Child
+      :key="`${componentKey}-1`"
+    />
+    <Child
+      :key="`${componentKey}-2`"
+    />
+  </div>
+</template>
 
-## 异步组件
+<script>
+  export default {
+    data() {
+      return {
+        componentKey: 0,
+      };
+    },
+    methods: {
+      forceRerender(child) {
+        this.componentKey += 1;
+      }
+    }
+  }
+</script>
+
+```
+我们调用forceRerender方法之后组件因为key值改变而更新
+
+# 异步组件
 在大型应用中，我们有时需要分割小一些的代码块，并且只在需要的时候才从服务器加载某个模块。
 
 ```js
@@ -104,7 +135,7 @@ const files = require.context(
 
 1. provide 选项允许我们指定我们想要提供给后代组件的数据/方法
 ```js
-provide: function() {
+provide: function () {
     return {
         getMap: this.getMap
     }
@@ -116,8 +147,96 @@ provide: function() {
     inject: [getMap]
 }
 ```
+
+## 自定义生命周期
+1. 应用：当同时打开有多个轮询/定时器/动画等的标签页面时，导致浏览器卡顿
+   解决：通过`visibilitychange`事件监听标签显/隐控制持续占内存的方法
+```js
+// pagechange.js
+import Vue from 'vue'
+
+// 通知所有组件页面状态发生了变化
+const notifyVisibilityChange = (lifeCycleName, vm) => {
+    // 生命周期函数会存在$options中，通过$options[lifeCycleName]获取生命周期
+    const lifeCycles = vm.$options[lifeCycleName]
+
+    // 因为使用了created的合并策略，所以是一个数组
+    if (lifeCycles && lifeCycles.length) {
+        // 遍历 lifeCycleName对应的生命周期函数列表，依次执行
+        lifeCycles.forEach(lifecycle => {
+            lifecycle.call(vm)
+        })
+    }
+
+    // 遍历所有的子组件，然后依次递归执行
+    if (vm.$children && vm.$children.length) {
+        vm.$children.forEach(child => {
+            notifyVisibilityChange(lifeCycleName, child)
+        })
+    }
+}
+
+/**
+ * 添加生命周期钩子函数
+ * @param {*} rootVm vue 根实例，在页面显示隐藏时候，通过root向下通知
+ */
+export const init = () => {
+    const { optionMergeStrategies } = Vue.config
+
+    /*
+      定义了两个生命周期函数 pageVisible, pageHidden
+      为什么要赋值为 optionMergeStrategies.created呢
+      这个相当于指定 pageVisible, pageHidden 的`合并策略`与 created的相同（其他生命周期函数都一样）
+     */
+    optionMergeStrategies.pageVisible = optionMergeStrategies.beforeCreate
+    optionMergeStrategies.pageHidden = optionMergeStrategies.created
+}
+
+/**
+ * 将事件变化绑定到根节点上面
+ * @param {*} rootVm
+ */
+export const bind = rootVm => {
+    window.addEventListener('visibilitychange', () => {
+        // 判断调用哪个生命周期函数
+        let lifeCycleName
+        if (document.visibilityState === 'hidden') {
+            lifeCycleName = 'pageHidden'
+        } else if (document.visibilityState === 'visible') {
+            lifeCycleName = 'pageVisible'
+        }
+        if (lifeCycleName) {
+            // 通知所有组件生命周期发生变化了
+            notifyVisibilityChange(lifeCycleName, rootVm)
+        }
+    })
+}
+
+// main.js 引入&注册方法
+
+import { init, bind} from 'pagechange.js'
+init()
+const vm = new Vue(
+    router,
+    store
+).$mount('#app')
+bind(vm)
+
+
+// 组件使用
+
+export default  {
+    pageVisible() {
+        console.log('页面显示出来了')
+      },
+      pageHidden() {
+        console.log('页面隐藏了')
+      }
+}
+```    
+
 ## keep-alive缓存
-1. keep-alive 包裹动态组件时会缓存不活动的组件
+1.使用： keep-alive 包裹动态组件时会缓存不活动的组件
 该组件参数props
 * `include:`   字符串或正则表达式。只有名称匹配的组件会被缓存
 * `exclued:`   字符串或正则表达式。只有名称匹配的组件不会被缓存
@@ -145,9 +264,304 @@ provide: function() {
 的时候进行更新，怎么操作？
 
 >子组件添加生命周期：activated
-在渲染该组件或者进入该组件时会调用
+在渲染该组件或者进入该组件
+>时会调用
  
 > deactivated
 在切换到别的组件时调用
+>
+
+3. keep-alive实现原理，它是一个抽象组件（自身不渲染Dom元素）
+
+ ```js
+/* keep-alive组件 */
+export default {
+  name: 'keep-alive',
+  /* 抽象组件 */
+  abstract: true,
+
+  props: {
+    include: patternTypes,
+    exclude: patternTypes
+  },
+
+  created () {
+    /* 缓存对象 */
+    this.cache = Object.create(null)
+  },
+
+  /* destroyed钩子中销毁所有cache中的组件实例 */
+  destroyed () {
+    for (const key in this.cache) {
+      pruneCacheEntry(this.cache[key])
+    }
+  },
+  mounted() {
+       // 实时监听黑白名单的变动
+       this.$watch('include', val => {
+           pruneCache(this, name => matched(val, name))
+       })
+       this.$watch('exclude', val => {
+           pruneCache(this, name => !matches(val, name))
+       })
+   },
+  render () {
+    /* 得到slot插槽中的第一个组件 */
+    const vnode: VNode = getFirstComponentChild(this.$slots.default)
+
+    const componentOptions: ?VNodeComponentOptions = vnode && vnode.componentOptions
+    if (componentOptions) {
+      // check pattern
+      /* 获取组件名称，优先获取组件的name字段，否则是组件的tag */
+      const name: ?string = getComponentName(componentOptions)
+      /* name不在inlcude中或者在exlude中则直接返回vnode（没有取缓存） */
+      if (name && (
+        (this.include && !matches(this.include, name)) ||
+        (this.exclude && matches(this.exclude, name))
+      )) {
+        return vnode
+      }
+      const key: ?string = vnode.key == null
+        // same constructor may get registered as different local components
+        // so cid alone is not enough (#3269)
+        ? componentOptions.Ctor.cid + (componentOptions.tag ? `::${componentOptions.tag}` : '')
+        : vnode.key
+      /* 如果已经做过缓存了则直接从缓存中获取组件实例给vnode，还未缓存过则进行缓存 */
+      if (this.cache[key]) {
+        vnode.componentInstance = this.cache[key].componentInstance
+        // 2.5.0 新增这段逻辑，使用 LRU 策略 make current key freshest
+        remove(keys, key);
+        keys.push(key);
+      }
+      // 不命中缓存,把 vnode 设置进缓存
+      else {
+        this.cache[key] = vnode;
+        // 2.5.0 新增这段逻辑，LRU 策略的移除。
+        keys.push(key);
+        // 如果配置了 max 并且缓存的长度超过了 this.max，还要从缓存中删除第一个
+        if (this.max && keys.length > parseInt(this.max)) {
+            pruneCacheEntry(cache, keys[0], keys, this._vnode);
+        }
+        
+      }
+      /* keepAlive标记位 */
+      vnode.data.keepAlive = true
+    }
+    return vnode
+  }
+}
+```
+* 1.获取keep-alive 包裹着的第一个子组件对象和组件名
+匹配include/exclude,决定是否缓存放回组件实例
+* 2.根据组件id和tag生成缓存key,并在缓存对象中查找是否缓存过，如存在取出缓存值并更新key在cache keys
+中的位置（LRU置换策略关键）
+* 3.在this.cache对象中存储该组件实例并保存key,之后检查缓存的实例数量是否超过max设置，如果是，通过LRU置换策略
+删除最久的（数组第一个）
+* 4.最后组件实例的keepAlive属性设 为true,在渲染和执行被包裹组件的钩子函数会用到
+
+4. keep-alive 渲染过程
+vue渲染过程：
+> new Vue => init() => mount => complie => render => vnode => patch => DOM
 
 
+keep-alive组件是在patch阶段，这是构建组件树（虚拟dom）,并将VNode转成真正DOM节点的过程
+
+>Q&A1：我们都知道keep-alive不渲染dom节点，这是怎么做到的呢？
+```js
+// src/core/instance/lifecycle.js
+export function initLifecycle (vm: Component) {
+    const options= vm.$options
+    // 找到第一个非abstract父组件实例
+    let parent = options.parent
+    if (parent && !options.abstract) {
+        while (parent.$options.abstract && parent.$parent) {
+              parent = parent.$parent
+        }
+        parent.$children.push(vm)
+    }
+    vm.$parent = parent
+    // ...
+}
+```
+###### Vue初始化生命周期时，为组件建立父子关系会根据abstract忽略某个组件
+
+>Q&A2: keep-alive包裹的组件如何使用缓存的？
+在patch阶段
+```js
+// src/core/vdom/patch.js
+function createComponent (vnode, insertedVnodeQueue, parentElm, refElm) {
+    let i = vnode.data
+    if (isDef(i)) {
+        const isReactivated = isDef(vnode.componentInstance) && i.keepAlive
+        if (isDef(i = i.hook) && isDef(i = i.init)) {
+            i(vnode, false)
+        }
+        if (isDef(vnode.componentInstance)) {
+            initComponent(vnode, insertedVnodeQueue)
+            insert(parentElem, vnode.elem, refElem) // 将缓存的DOM(vnode.elem) 插入父元素中
+            if (isTrue(isReactivated)) {
+                reactivateComponent(vnode, insertedVnodeQueue, parentEle, refElm)
+            }
+            return true
+        }
+    }
+}
+```
+* 在首次加载被包裹组建时，由keep-alive.js中的render函数可知，vnode.componentInstance的值是undfined，keepAlive的值是true，因为keep-alive组件作为父组件，它的render函数会先于被包裹组件执行；那么只执行到i(vnode,false)，后面的逻辑不执行；
+* 再次访问被包裹组件时，vnode.componentInstance的值就是已经缓存的组件实例，那么会执行insert(parentElm, vnode.elm, refElm)逻辑，这样就直接把上一次的DOM插入到父元素中。
+
+## 组件间传参
+1. 父子组件传参： props, $emit
+2. vuex （所有组件间传参）=》 适合比较复杂的情况
+3. eventBus (兄弟组件间/跨级组件间) ==》 逻辑不复杂的小页面
+```js
+// 直接使用
+import Vue from 'vue'
+const eventBus = new Vue()
+export { eventBus } 
+
+// 组件A 监听get_click事件
+ eventBus.$on('get_click', (target) => {
+    console.log(target)
+})
+
+// 组件B 触发get_click事件
+eventBus.$emit('get_click', '哈哈，我点击了你')
+
+// 自定义
+class EventBus{
+    constructor(){
+        // 一个map，用于存储事件与回调之间的对应关系
+        this.event=Object.create(null);
+    };
+    //注册事件
+    on(name,fn){
+        if(!this.event[name]){
+            //一个事件可能有多个监听者
+            this.event[name]=[];
+        };
+        this.event[name].push(fn);
+    };
+    //触发事件
+    emit(name,...args){
+        //给回调函数传参
+        this.event[name]&&this.event[name].forEach(fn => {
+            fn(...args)
+        });
+    };
+    //只被触发一次的事件
+    once(name,fn){
+        //在这里同时完成了对该事件的注册、对该事件的触发，并在最后取消该事件。
+        const cb=(...args)=>{
+            //触发
+            fn(...args);
+            //取消
+            this.off(name,fn);
+        };
+        //监听
+        this.on(name,cb);
+    };
+    //取消事件
+    off(name,offcb){
+        if(this.event[name]){
+            let index=this.event[name].findIndex((fn)=>{
+                return offcb===fn;
+            })
+            this.event[name].splice(index,1);
+            if(!this.event[name].length){
+                delete this.event[name];
+            }
+        }
+    }
+}
+```
+4. provide, inject (跨级传参) 
+```js
+// 祖父级组件
+provide() {
+    return {
+        tabbarIndex: 0
+    }
+}
+
+// 孙级组件
+inject:['tabbarIndex']
+// 缺点：
+// 1.追踪数据较为困难
+// 2.provide,reject绑定的数据不是可响应的
+```
+5. $attrs(非props 属性), $listeners（监听的事件） （跨级传参， 多层级组件交互）
+```vue
+// 孙级组件1
+<template>
+    <div>{{parentName}} <button @click="reset">点击修改</button></div>
+</template>
+
+<script>
+    export default {
+        name:'SonItem1',
+        inheritAttrs:false,
+        props: {
+            parentName:{
+                type:String
+            }
+        },
+        methods:{
+            reset() {
+                this.$emit('update')
+            }
+        }
+    }
+</script>
+// 孙级组件2
+<template>
+    <div>{{parentName}}</div>
+</template>
+
+<script>
+    export default {
+        name:'SonItem2',
+        inheritAttrs:false,
+        props: {
+            parentName:{
+                type:String
+            }
+        }
+    }
+</script>
+// 子组件
+
+<template>
+    <son-item1 v-bind="$attrs" v-on="$listeners"></son-item1>
+    <son-item2 v-bind="$attrs" v-on="$listeners"></son-item2>
+</template>
+
+<script>
+    export default {
+         name: 'ChildItem',
+         inheritAttrs:false,
+    }
+</script>
+// 父组件
+
+
+<template>
+    <child-item :parentName="parentName" @update="changeName"></child-item>
+</template>
+
+<script>
+    export default {
+         data(){
+            return {
+                parentName: '1111111'
+            }
+         },
+         methods:{
+            changeName() {
+                this.parentName = '2222222'
+            }
+         }
+    }
+</script>
+
+```

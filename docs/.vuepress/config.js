@@ -87,7 +87,8 @@ module.exports = {
                             collapsable: false,
                             children: [
                                 '/aboutVue/',
-                                '/aboutVue/vueApi.md'
+                                '/aboutVue/vueApi.md',
+                                '/aboutVue/sourcAnalysis.md'
                             ]
                         }
 
